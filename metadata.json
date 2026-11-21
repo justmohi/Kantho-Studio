@@ -1,0 +1,6 @@
+{
+  "name": "Kantho Studio — ElevenLabs AI Voice & Bengali TTS",
+  "description": "Professional AI Text-to-Speech studio powered by the official ElevenLabs API with natural Bengali & multilingual voice synthesis, Gemini Auto Emotion Tags, real Voice Library, and long-text audio chunking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

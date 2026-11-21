@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          var nativeFetch = window.fetch ? window.fetch.bind(window) : undefined;
+          if (nativeFetch) {
+            var winDesc = Object.getOwnPropertyDescriptor(window, 'fetch');
+            if (!winDesc || winDesc.configurable !== false) {
+              Object.defineProperty(window, 'fetch', {
+                configurable: true,
+                enumerable: true,
+                get: function () {
+                  return nativeFetch;
+                },
+                set: function () {
+                  // Safely absorb browser-extension assignments to window.fetch without throwing TypeError
+                },
+              });
+            }
+            if (typeof Window !== 'undefined' && Window.prototype) {
+              var protoDesc = Object.getOwnPropertyDescriptor(Window.prototype, 'fetch');
+              if (!protoDesc || protoDesc.configurable !== false) {
+                Object.defineProperty(Window.prototype, 'fetch', {
+                  configurable: true,
+                  enumerable: true,
+                  get: function () {
+                    return nativeFetch;
+                  },
+                  set: function () {},
+                });
+              }
+            }
+          }
+        } catch (_err) {}
+
+        window.addEventListener(
+          'error',
+          function (event) {
+            var msg = event && event.message ? String(event.message) : '';
+            var file = event && event.filename ? String(event.filename) : '';
+            if (
+              file.indexOf('chrome-extension://') === 0 ||
+              msg.indexOf('Cannot set property fetch') !== -1
+            ) {
+              event.stopImmediatePropagation();
+              event.preventDefault();
+              return false;
+            }
+          },
+          true
+        );
+
+        window.addEventListener(
+          'unhandledrejection',
+          function (event) {
+            var reason =
+              event && event.reason
+                ? String(event.reason.stack || event.reason.message || event.reason)
+                : '';
+            if (
+              reason.indexOf('chrome-extension://') !== -1 ||
+              reason.indexOf('Cannot set property fetch') !== -1
+            ) {
+              event.stopImmediatePropagation();
+              event.preventDefault();
+            }
+          },
+          true
+        );
+      })();
+    </script>
+    <title>Kantho Studio — ElevenLabs AI Voice & Bengali TTS</title>
+    <meta name="description" content="Professional AI Text-to-Speech studio powered by the official ElevenLabs API with natural Bengali & multilingual voice synthesis, Gemini Auto Emotion Tags, real Voice Library, and long-text audio chunking." />
+    <meta property="og:title" content="Kantho Studio — ElevenLabs AI Voice & Bengali TTS" />
+    <meta property="og:description" content="Professional AI Text-to-Speech studio powered by the official ElevenLabs API with natural Bengali & multilingual voice synthesis, Gemini Auto Emotion Tags, real Voice Library, and long-text audio chunking." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#090B10] text-slate-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
