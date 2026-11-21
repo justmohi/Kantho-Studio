@@ -26,7 +26,7 @@ import type {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = 3000;
+const PORT = Number.parseInt(process.env.PORT || '8080', 10);
 const ELEVENLABS_BASE_URL = 'https://api.elevenlabs.io';
 
 // Persistent storage directories for generated MP3 audio and generation history

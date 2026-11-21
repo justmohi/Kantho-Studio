@@ -1,0 +1,12 @@
+.git
+.gitignore
+.github
+.env
+.env.*
+!.env.example
+.data
+node_modules
+dist
+.firebase
+firebase-debug.log
+*.log
