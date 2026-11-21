@@ -53,14 +53,24 @@ Create these two secrets and add one secret version to each:
 
 Do not put either key in frontend environment variables or commit them to GitHub.
 
-Before deployment, grant the Cloud Run runtime service account the **Secret Manager Secret Accessor** role for both secrets. You can do this on each secret's Permissions panel. If deploying for the first time, deploy once, identify the service's runtime service account in Cloud Run, grant the role, then redeploy.
+Create a dedicated runtime service account before deployment:
+
+```powershell
+gcloud iam service-accounts create kantho-studio-runtime --display-name "Kantho Studio Cloud Run"
+```
+
+In Secret Manager, open each secret's **Permissions** panel and grant this principal **Secret Manager Secret Accessor**:
+
+`kantho-studio-runtime@YOUR_PROJECT_ID.iam.gserviceaccount.com`
+
+Grant the role on both `elevenlabs-api-key` and `gemini-api-key` only (secret-level access). The identity running the deploy command also needs permission to attach this service account (Service Account User).
 
 ## 5. Deploy the Express API to Cloud Run
 
 Open PowerShell in the repository root (the folder containing `package.json` and `server.ts`).
 
 ```powershell
-gcloud run deploy kantho-studio-api --source . --region asia-south1 --allow-unauthenticated --set-secrets ELEVENLABS_API_KEY=elevenlabs-api-key:latest,GEMINI_API_KEY=gemini-api-key:latest --memory 1Gi --cpu 1 --timeout 300 --max-instances 3 --project YOUR_PROJECT_ID
+gcloud run deploy kantho-studio-api --source . --region asia-south1 --allow-unauthenticated --service-account kantho-studio-runtime@YOUR_PROJECT_ID.iam.gserviceaccount.com --set-secrets ELEVENLABS_API_KEY=elevenlabs-api-key:latest,GEMINI_API_KEY=gemini-api-key:latest --memory 1Gi --cpu 1 --timeout 300 --max-instances 3 --project YOUR_PROJECT_ID
 ```
 
 When prompted, allow Google Cloud to enable required services and create the Artifact Registry repository.
